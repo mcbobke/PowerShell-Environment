@@ -111,7 +111,7 @@ function Get-WindowsVersion
         [Parameter(Mandatory = $true, Position = 1)][System.Management.Automation.PSCredential]$Credential
     )
 
-    function Compute-Value
+    function Get-Value
     {
         param(
             [String]$ComputerName,
@@ -139,13 +139,13 @@ function Get-WindowsVersion
 
     $WinVer = New-Object -TypeName PSObject
 
-    $WinVer | Add-Member -MemberType "NoteProperty" -Name "Major" -Value $(Compute-Value -ComputerName $ComputerName -Credential $Credential -Property "CurrentMajorVersionNumber")
+    $WinVer | Add-Member -MemberType "NoteProperty" -Name "Major" -Value $(Get-Value -ComputerName $ComputerName -Credential $Credential -Property "CurrentMajorVersionNumber")
 
-    $WinVer | Add-Member -MemberType "NoteProperty" -Name "Minor" -Value $(Compute-Value -ComputerName $ComputerName -Credential $Credential -Property "CurrentMinorVersionNumber")
+    $WinVer | Add-Member -MemberType "NoteProperty" -Name "Minor" -Value $(Get-Value -ComputerName $ComputerName -Credential $Credential -Property "CurrentMinorVersionNumber")
 
-    $WinVer | Add-Member -MemberType "NoteProperty" -Name "Build" -Value $(Compute-Value -ComputerName $ComputerName -Credential $Credential -Property "CurrentBuild")
+    $WinVer | Add-Member -MemberType "NoteProperty" -Name "Build" -Value $(Get-Value -ComputerName $ComputerName -Credential $Credential -Property "CurrentBuild")
 
-    $WinVer | Add-Member -MemberType "NoteProperty" -Name "Revision" -Value $(Compute-Value -ComputerName $ComputerName -Credential $Credential -Property "UBR")
+    $WinVer | Add-Member -MemberType "NoteProperty" -Name "Revision" -Value $(Get-Value -ComputerName $ComputerName -Credential $Credential -Property "UBR")
 
     $WinVer
 }
