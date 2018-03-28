@@ -14,10 +14,10 @@ function Get-LoggedInUsers
         The credentials to use when querying a PC. Formatted as DOMAIN\USERNAME. Use an admin account.
 
         .EXAMPLE
-        Get-LoggedInUsers -ComputerName MBOBKE-INT
+        Get-LoggedInUsers -ComputerName computername -Credential domain\username
 
         .EXAMPLE
-        Get-LoggedInUsers MBOBKE-INT
+        Get-LoggedInUsers computername domain\username
 
         .LINK
         https://stackoverflow.com/questions/23219718/powershell-script-to-see-currently-logged-in-users-domain-and-machine-status
@@ -31,7 +31,7 @@ function Get-LoggedInUsers
         [Parameter(Mandatory = $true, Position = 1)][System.Management.Automation.PSCredential]$Credential
     )
 
-    if (!Test-Connection -ComputerName $ComputerName -Quiet) {
+    if (!(Test-Connection -ComputerName $ComputerName -Quiet)) {
         throw "That computer is offline or does not exist."
     }
 
@@ -97,10 +97,10 @@ function Get-WindowsVersion
         The credentials to use when querying a PC (required for Invoke-Command). Formatted as DOMAIN\USERNAME. Use an admin account.
 
         .EXAMPLE
-        Get-WindowsVersion -Credential blizzard\octopus -ComputerName MBOBKE-INT
+        Get-WindowsVersion -ComputerName computername -Credential domain\username
 
         .EXAMPLE
-        Get-WindowsVersion blizzard\octopus MBOBKE-INT
+        Get-WindowsVersion computername domain\username
 
         .LINK
         https://superuser.com/a/1160428
@@ -111,23 +111,41 @@ function Get-WindowsVersion
         [Parameter(Mandatory = $true, Position = 1)][System.Management.Automation.PSCredential]$Credential
     )
 
-    if (!Test-Connection -ComputerName $ComputerName -Quiet) {
+    function Compute-Value
+    {
+        param(
+            [String]$ComputerName,
+            [System.Management.Automation.PSCredential]$Credential,
+            [String]$Property
+        )
+
+        $ScriptBlockParams = @{
+            Path = "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion";
+            Name = $Property;
+        }
+
+        $Params = @{
+            ComputerName = $ComputerName;
+            Credential = $Credential;
+            ScriptBlock = {Get-ItemProperty @ScriptBlockParams};
+        }
+
+        $(Invoke-Command @Params).$Property
+    }
+
+    if (!(Test-Connection -ComputerName $ComputerName -Quiet)) {
         throw "That computer is offline or does not exist."
     }
 
     $WinVer = New-Object -TypeName PSObject
 
-    $WinVer | Add-Member -MemberType NoteProperty -Name Major `
-        -Value $(Invoke-Command -comp $ComputerName -cred $Credential -script {Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion' CurrentMajorVersionNumber}).CurrentMajorVersionNumber
+    $WinVer | Add-Member -MemberType "NoteProperty" -Name "Major" -Value $(Compute-Value -ComputerName $ComputerName -Credential $Credential -Property "CurrentMajorVersionNumber")
 
-    $WinVer | Add-Member -MemberType NoteProperty -Name Minor `
-        -Value $(Invoke-Command -comp $ComputerName -cred $Credential  -script {Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion' CurrentMinorVersionNumber}).CurrentMinorVersionNumber
+    $WinVer | Add-Member -MemberType "NoteProperty" -Name "Minor" -Value $(Compute-Value -ComputerName $ComputerName -Credential $Credential -Property "CurrentMinorVersionNumber")
 
-    $WinVer | Add-Member -MemberType NoteProperty -Name Build `
-        -Value $(Invoke-Command -comp $ComputerName -cred $Credential  -script {Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion' CurrentBuild}).CurrentBuild
+    $WinVer | Add-Member -MemberType "NoteProperty" -Name "Build" -Value $(Compute-Value -ComputerName $ComputerName -Credential $Credential -Property "CurrentBuild")
 
-    $WinVer | Add-Member -MemberType NoteProperty -Name Revision `
-        -Value $(Invoke-Command -comp $ComputerName -cred $Credential  -script {Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion' UBR}).UBR
+    $WinVer | Add-Member -MemberType "NoteProperty" -Name "Revision" -Value $(Compute-Value -ComputerName $ComputerName -Credential $Credential -Property "UBR")
 
     $WinVer
 }
