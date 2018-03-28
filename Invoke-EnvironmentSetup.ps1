@@ -5,25 +5,23 @@ Param(
 # Copy files
 Write-Host "Copying module and profile..."
 $ModuleParams = @{
-    Path = "$PSScriptRoot\MattBobkeCmdlets.psm1";
+    Path        = "$PSScriptRoot\MattBobkeCmdlets.psm1";
     Destination = "$Env:ProgramFiles\WindowsPowershell\Modules\MattBobkeCmdlets";
-    Force = $True;
+    Force       = $True;
 }
-if (!(Test-Path $ModuleParams.Destination))
-{
+if (!(Test-Path $ModuleParams.Destination)) {
     New-Item -Path "$Env:ProgramFiles\WindowsPowershell\Modules" -ItemType Directory -Name "MattBobkeCmdlets"
 }
 Copy-Item @ModuleParams
 
 $ProfileParams = @{
-    Path = "$PSScriptRoot\profile.ps1";
+    Path        = "$PSScriptRoot\profile.ps1";
     Destination = $profile.AllUsersAllHosts;
-    Force = $True;
+    Force       = $True;
 }
 Copy-Item @ProfileParams
 
-if ($InstallSSH -and !(Test-Path -Path "C:\Windows\System32\OpenSSH"))
-{
+if ($InstallSSH -and !(Test-Path -Path "C:\Windows\System32\OpenSSH")) {
     Write-Host "Installing WinOpenSSH..."
     & "$PSScriptRoot\Install-WinOpenSSH.ps1"
 }

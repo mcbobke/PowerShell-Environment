@@ -5,9 +5,9 @@ Param()
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 # Needed to avoid SSL/TLS error
 $url = 'https://github.com/PowerShell/Win32-OpenSSH/releases/latest/'
 $request = [System.Net.WebRequest]::Create($url)
-$request.AllowAutoRedirect=$false
-$response=$request.GetResponse()
-$downloadURL = $([String]$response.GetResponseHeader("Location")).Replace('tag','download') + '/OpenSSH-Win64.zip'
+$request.AllowAutoRedirect = $false
+$response = $request.GetResponse()
+$downloadURL = $([String]$response.GetResponseHeader("Location")).Replace('tag', 'download') + '/OpenSSH-Win64.zip'
 
 # Build desired file names
 $version = $downloadURL.Split('/')[7]
@@ -33,11 +33,11 @@ Set-Service sshd -StartupType Automatic
 Set-Service ssh-agent -StartupType Automatic
 
 $Params = @{
-    Path = "HKLM:\SOFTWARE\OpenSSH";
-    Name = "DefaultShell";
-    Value = "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe";
+    Path         = "HKLM:\SOFTWARE\OpenSSH";
+    Name         = "DefaultShell";
+    Value        = "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe";
     PropertyType = "String";
-    Force = $True;
+    Force        = $True;
 }
 New-ItemProperty @Params
 New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name "BobkePSProfileScript" -Value 1 -PropertyType Dword -Force

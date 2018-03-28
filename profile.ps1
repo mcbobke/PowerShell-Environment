@@ -8,7 +8,7 @@ function Test-Administrator {
 
 function prompt {
     # If running as administrator, set the following options
-    if (Test-Administrator){
+    if (Test-Administrator) {
         Write-Host "(ADMINISTRATOR) " -NoNewline -ForegroundColor Red
     }
 

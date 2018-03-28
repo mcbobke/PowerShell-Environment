@@ -1,5 +1,4 @@
-function Get-LoggedInUsers
-{
+function Get-LoggedInUsers {
     <#
         .SYNOPSIS
         Returns the session and user information of the currently logged-on users of the designated PC.
@@ -27,7 +26,7 @@ function Get-LoggedInUsers
     #>
 
     param(
-        [Parameter(Mandatory = $true, Position = 0)][string]$ComputerName,
+        [Parameter(Mandatory = $true, Position = 0)][String]$ComputerName,
         [Parameter(Mandatory = $true, Position = 1)][System.Management.Automation.PSCredential]$Credential
     )
 
@@ -81,8 +80,7 @@ function Get-LoggedInUsers
     $logons
 }
 
-function Get-WindowsVersion
-{
+function Get-WindowsVersion {
     <#
         .SYNOPSIS
         Returns the major, minor, build, and revision numbers of the Windows OS on the target PC.
@@ -111,8 +109,7 @@ function Get-WindowsVersion
         [Parameter(Mandatory = $true, Position = 1)][System.Management.Automation.PSCredential]$Credential
     )
 
-    function Get-Value
-    {
+    function Get-Value {
         param(
             [String]$ComputerName,
             [System.Management.Automation.PSCredential]$Credential,
@@ -126,8 +123,8 @@ function Get-WindowsVersion
 
         $Params = @{
             ComputerName = $ComputerName;
-            Credential = $Credential;
-            ScriptBlock = {Get-ItemProperty @ScriptBlockParams};
+            Credential   = $Credential;
+            ScriptBlock  = {Get-ItemProperty @ScriptBlockParams};
         }
 
         $(Invoke-Command @Params).$Property
