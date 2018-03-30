@@ -44,3 +44,4 @@ $Shell.WindowSize = $WindowSize
 
 # Additonal PATH extension
 $env:Path += ";C:\Program Files\OpenSSH"
+$env:Path += ";C:\Program Files (x86)\Windows Kits\10\Debuggers\x64"

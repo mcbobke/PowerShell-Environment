@@ -1,3 +1,6 @@
+[CmdletBinding()]
+Param()
+
 # Delete module folder
 Write-Host "Deleting module folder..."
 Remove-Item -Path "$Env:ProgramFiles\WindowsPowershell\Modules\MattBobkeCmdlets" -Recurse
@@ -6,22 +9,15 @@ Remove-Item -Path "$Env:ProgramFiles\WindowsPowershell\Modules\MattBobkeCmdlets"
 Write-Host "Deleting profile..."
 Remove-Item -Path $profile.AllUsersAllHosts
 
-# Uninstall WinOpenSSH if installed
-Try {
-    $Params = @{
-        Path = "HKLM:\SOFTWARE\OpenSSH\";
-        Name = "BobkePSProfileScript";
-        ErrorAction = "Stop";
-    }
-    
-    $installedViaScript = Get-ItemPropertyValue @Params
-}
-Catch {
-    $installedViaScript = 0
-}
-if ((Test-Path -Path "HKLM:\SOFTWARE\OpenSSH") -and ($installedViaScript -eq 1)) {
-    Write-Host "Uninstalling WinOpenSSH..."
-    & "$PSScriptRoot\Uninstall-WinOpenSSH.ps1"
-}
+# Uninstall WinOpenSSH
+& "$PSScriptRoot\Uninstall-WinOpenSSH.ps1"
+
+# Uninstall WinDbg
+& "$PSScriptRoot\Uninstall-WinDbg.ps1"
+
+# Delete C:\psenv\ folder
+Write-Host "Waiting 10 seconds for all processes to finish..."
+Start-Sleep -Seconds 10 # Needed to let uninstall WinDbg process complete
+Remove-Item -Path "C:\psenv\" -Recurse -Force
 
 Write-Host "Done!"
