@@ -1,6 +1,9 @@
 [CmdletBinding()]
 Param()
 
+#### TODO ####
+# Replace .NET web request with Powershell Invoke-Webrequest
+
 # Get latest version from Github releases
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 # Needed to avoid SSL/TLS error
 $url = 'https://github.com/PowerShell/Win32-OpenSSH/releases/latest/'

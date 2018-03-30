@@ -1,3 +1,6 @@
+#### TODO ####
+# Get-WindowsVersion is broken - fix it
+
 function Get-LoggedInUsers {
     <#
         .SYNOPSIS

@@ -8,7 +8,13 @@ Remove-Item -Path $profile.AllUsersAllHosts
 
 # Uninstall WinOpenSSH if installed
 Try {
-    $installedViaScript = Get-ItemPropertyValue -Path "HKLM:\SOFTWARE\OpenSSH\" -Name "BobkePSProfileScript"
+    $Params = @{
+        Path = "HKLM:\SOFTWARE\OpenSSH\";
+        Name = "BobkePSProfileScript";
+        ErrorAction = "Stop";
+    }
+    
+    $installedViaScript = Get-ItemPropertyValue @Params
 }
 Catch {
     $installedViaScript = 0
