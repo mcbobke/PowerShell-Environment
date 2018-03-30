@@ -3,6 +3,8 @@ Param()
 
 #### TODO ####
 # Replace .NET web request with Powershell Invoke-Webrequest
+# Figure out why the WebClient object isn't being disposed of properly
+#   If this script is run twice without restarting Powershell, the download hangs
 
 # Get latest version from Github releases
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 # Needed to avoid SSL/TLS error
@@ -17,7 +19,7 @@ $version = $downloadURL.Split('/')[7]
 $zippedFileName = "OpenSSH-Win64-$version.zip"
 $unzippedFileName = $zippedFileName.Replace(".zip", '')
 
-# Download the zip file, store in C:\Temp\OpenSSHDownload
+# Download the zip file, store in C:\Temp\
 Write-Host "Downloading version $version..."
 $client = New-Object System.Net.WebClient
 $client.DownloadFile($downloadURL, "C:\Temp\$zippedFileName")

@@ -1,6 +1,3 @@
-#### TODO ####
-# Get-WindowsVersion is broken - fix it
-
 function Get-LoggedInUsers {
     <#
         .SYNOPSIS
@@ -119,15 +116,13 @@ function Get-WindowsVersion {
             [String]$Property
         )
 
-        $ScriptBlockParams = @{
-            Path = "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion";
-            Name = $Property;
-        }
+        $Path = "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion"
 
         $Params = @{
             ComputerName = $ComputerName;
             Credential   = $Credential;
-            ScriptBlock  = {Get-ItemProperty @ScriptBlockParams};
+            ScriptBlock  = {Get-ItemProperty -Path $args[0] -Name $args[1]};
+            ArgumentList = $Path,$Property;
         }
 
         $(Invoke-Command @Params).$Property

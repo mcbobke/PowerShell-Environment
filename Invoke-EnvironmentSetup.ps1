@@ -10,16 +10,17 @@ $ModuleParams = @{
     Force       = $True;
 }
 if (!(Test-Path $ModuleParams.Destination)) {
-    New-Item -Path "$Env:ProgramFiles\WindowsPowershell\Modules" -ItemType Directory -Name "MattBobkeCmdlets"
+    New-Item -Path "$Env:ProgramFiles\WindowsPowershell\Modules" -ItemType "Directory" -Name "MattBobkeCmdlets" `
+        | Out-Null
 }
-Copy-Item @ModuleParams
+Copy-Item @ModuleParams | Out-Null
 
 $ProfileParams = @{
     Path        = "$PSScriptRoot\profile.ps1";
     Destination = $profile.AllUsersAllHosts;
     Force       = $True;
 }
-Copy-Item @ProfileParams
+Copy-Item @ProfileParams | Out-Null
 
 if ($InstallSSH -and !(Test-Path -Path "C:\Windows\System32\OpenSSH")) {
     Write-Host "Installing WinOpenSSH..."
@@ -27,5 +28,7 @@ if ($InstallSSH -and !(Test-Path -Path "C:\Windows\System32\OpenSSH")) {
 }
 
 # Execute profile - will show errors if certain profiles don't exist
-Write-Host 'Executing $profile.AllUsersAllHosts'
+Write-Host 'Executing $profile.AllUsersAllHosts...'
 & $profile.AllUsersAllHosts
+
+Write-Host "Done!"
