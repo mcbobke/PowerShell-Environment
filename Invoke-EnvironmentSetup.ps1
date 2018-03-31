@@ -43,6 +43,7 @@ if ($InstallWinDbg) {
 
 # Execute profile - will show errors if certain profiles don't exist
 Write-Host 'Executing $profile.AllUsersAllHosts...'
+Write-Host "Close and reopen Powershell to enable colored prompt."
 & $profile.AllUsersAllHosts
 
 Write-Host "Done!"

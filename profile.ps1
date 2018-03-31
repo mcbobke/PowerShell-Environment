@@ -26,13 +26,13 @@ $Shell = $Host.UI.RawUI
 Import-Module MattBobkeCmdlets
 
 if (Test-Administrator) {
-    $Shell.WindowTitle = "Godmode Activated!"
+    $Shell.WindowTitle = "Powershell (ADMINISTRATOR)"
 }
 else {
-    $Shell.WindowTitle = "You are POWERLESS!"
+    $Shell.WindowTitle = "Powershell"
 }
 
-$BufferSize = $Shell.BufferSize
+<# $BufferSize = $Shell.BufferSize
 $BufferSize.Width = 150
 $BufferSize.Height = 3000
 $Shell.BufferSize = $BufferSize
@@ -40,7 +40,7 @@ $Shell.BufferSize = $BufferSize
 $WindowSize = $Shell.WindowSize
 $WindowSize.Width = 150
 $WindowSize.Height = 50
-$Shell.WindowSize = $WindowSize
+$Shell.WindowSize = $WindowSize #>
 
 # Additonal PATH extension
 $env:Path += ";C:\Program Files\OpenSSH"
