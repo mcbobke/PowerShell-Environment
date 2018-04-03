@@ -8,8 +8,17 @@ if (!(Test-Path -Path "C:\psenv" -PathType "Container")) {
     New-Item -Path "C:\" -Name "psenv" -ItemType "Directory" -Force | Out-Null
 }
 
-# Copy files
-Write-Host "Copying module and profile..."
+# Check $PSVersionTable.PSVersion.Major
+#   If 6 - install WindowsPSModulePath
+if ($PSVersionTable.PSVersion.Major -eq 6) {
+    Write-Host "Installing WindowsPSModulePath for 5.0 compatibility..."
+    Install-Module -Name WindowsPSModulePath
+    Import-Module -Name WindowsPSModulePath
+    Add-WindowsPSModulePath
+}
+
+# Copy module - compatible with PS 5 and 6 due to WindowsPSModulePath
+Write-Host "Copying module..."
 $ModuleParams = @{
     Path        = "$PSScriptRoot\MattBobkeCmdlets.psm1";
     Destination = "$Env:ProgramFiles\WindowsPowershell\Modules\MattBobkeCmdlets";
@@ -21,6 +30,8 @@ if (!(Test-Path $ModuleParams.Destination)) {
 }
 Copy-Item @ModuleParams | Out-Null
 
+# Copy profile
+Write-Host "Copying profile..."
 $ProfileParams = @{
     Path        = "$PSScriptRoot\profile.ps1";
     Destination = $profile.AllUsersAllHosts;
@@ -29,7 +40,7 @@ $ProfileParams = @{
 Copy-Item @ProfileParams | Out-Null
 
 # If switch, install OpenSSH
-if ($InstallSSH -and !(Test-Path -Path "C:\Windows\System32\OpenSSH")) {
+if ($InstallSSH -and !(Test-Path -Path "C:\Windows\System32\OpenSSH\ssh.exe")) {
     Write-Host "Installing WinOpenSSH..."
     & "$PSScriptRoot\Install-WinOpenSSH.ps1"
 }
@@ -41,9 +52,7 @@ if ($InstallWinDbg) {
     & "$PSScriptRoot\Install-WinDbg.ps1"
 }
 
-# Execute profile - will show errors if certain profiles don't exist
+# Execute profile
 Write-Host 'Executing $profile.AllUsersAllHosts...'
-Write-Host "Close and reopen Powershell to enable colored prompt."
 & $profile.AllUsersAllHosts
-
-Write-Host "Done!"
+Write-Host "Done! Close and reopen Powershell to enable colored prompt."

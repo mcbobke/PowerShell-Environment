@@ -23,7 +23,13 @@ function prompt {
 # Variable to make editing options simpler
 $Shell = $Host.UI.RawUI
 
-Import-Module MattBobkeCmdlets
+# This must come before module imports for PS 5 compatibility
+if ($PSVersionTable.PSVersion.Major -eq 6) {
+    Import-Module -Name WindowsPSModulePath
+    Add-WindowsPSModulePath
+}
+
+Import-Module -Name MattBobkeCmdlets
 
 if (Test-Administrator) {
     $Shell.WindowTitle = "Powershell (ADMINISTRATOR)"

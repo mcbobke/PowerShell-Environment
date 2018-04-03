@@ -14,9 +14,17 @@ try {
 catch {
     $PSCmdlet.ThrowTerminatingError($PSItem)
 }
+
+# No longer working on PS 6.0
+<# $downloadUrl = $response `
+    | Select-Object -ExpandProperty "Links" `
+    | Where-Object {$PSItem.innerText -eq 'Download the .EXE'} `
+    | Select-Object -ExpandProperty "href" #>
+
+# PS 6.0 Conversion
 $downloadUrl = $response `
     | Select-Object -ExpandProperty "Links" `
-    | Where-Object {$PSItem.innerTExt -eq 'Download the .EXE'} `
+    | Where-Object {$PSItem.outerHTML.Contains('Download the .EXE')} `
     | Select-Object -ExpandProperty "href"
 $downloadUrl = 'https:' + $downloadUrl
 
