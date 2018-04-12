@@ -16,8 +16,8 @@ Remove-Item -Path $profile.AllUsersAllHosts
 & "$PSScriptRoot\Uninstall-WinDbg.ps1"
 
 # Delete C:\psenv\ folder
-Write-Host "Waiting 10 seconds for all processes to finish..."
-Start-Sleep -Seconds 10 # Needed to let uninstall WinDbg process complete
+Write-Host "Waiting 30 seconds for all processes to finish..."
+Start-Sleep -Seconds 30 # Needed to let uninstall WinDbg process complete
 Remove-Item -Path "C:\psenv\" -Recurse -Force
 
 Write-Host "Done!"
