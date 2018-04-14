@@ -3,8 +3,8 @@ Param()
 
 Try {
     $Params = @{
-        Path = "HKLM:\SOFTWARE\OpenSSH\";
-        Name = "BobkePSProfileScript";
+        Path        = "HKLM:\SOFTWARE\OpenSSH\";
+        Name        = "BobkePSProfileScript";
         ErrorAction = "Stop";
     }
     

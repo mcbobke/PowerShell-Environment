@@ -122,7 +122,7 @@ function Get-WindowsVersion {
             ComputerName = $ComputerName;
             Credential   = $Credential;
             ScriptBlock  = {Get-ItemProperty -Path $args[0] -Name $args[1]};
-            ArgumentList = $Path,$Property;
+            ArgumentList = $Path, $Property;
         }
 
         $(Invoke-Command @Params).$Property

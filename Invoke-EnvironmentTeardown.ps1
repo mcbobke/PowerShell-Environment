@@ -1,6 +1,8 @@
 [CmdletBinding()]
 Param()
 
+$scriptsPath = "$PSScriptRoot\scripts"
+
 # Delete module folder
 Write-Host "Deleting module folder..."
 Remove-Item -Path "$Env:ProgramFiles\WindowsPowershell\Modules\MattBobkeCmdlets" -Recurse
@@ -10,10 +12,10 @@ Write-Host "Deleting profile..."
 Remove-Item -Path $profile.AllUsersAllHosts
 
 # Uninstall WinOpenSSH
-& "$PSScriptRoot\Uninstall-WinOpenSSH.ps1"
+& "$scriptsPath\Uninstall-WinOpenSSH.ps1"
 
 # Uninstall WinDbg
-& "$PSScriptRoot\Uninstall-WinDbg.ps1"
+& "$scriptsPath\Uninstall-WinDbg.ps1"
 
 # Delete C:\psenv\ folder
 Write-Host "Waiting 30 seconds for all processes to finish..."
