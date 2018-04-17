@@ -20,10 +20,15 @@ function prompt {
     return ">" # The prompt function must return a string, or it will write the default prompt
 }
 
+$psenvPath = "$Env:SystemDrive\psenv"
+
 # Variable to make editing options simpler
 $Shell = $Host.UI.RawUI
 
-Import-Module MattBobkeCmdlets
+# Source all of the scripts
+foreach ($script in (Get-ChildItem "$psenvPath\scripts\import")) {
+    . (Join-Path -Path "$psenvPath\scripts\import" -ChildPath $script)
+}
 
 if (Test-Administrator) {
     $Shell.WindowTitle = "Powershell (ADMINISTRATOR)"
