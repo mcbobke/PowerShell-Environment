@@ -1,11 +1,6 @@
 [CmdletBinding()]
 Param()
 
-# Check to see if the $Env:SystemDrive\psenv directory exists - create it if it doesn't
-if (!(Test-Path -Path "$Global:psenvPath" -PathType "Container")) {
-    New-Item -Path "$Env:SystemDrive\" -Name "psenv" -ItemType "Directory" -Force | Out-Null
-}
-
 # Check to see if the $Global:psenvPath\win10sdk directory exists - create it if it doesn't
 if (!(Test-Path -Path "$Global:win10sdkPath" -PathType "Container")) {
     New-Item -Path "$Global:psenvPath" -Name "win10sdk" -ItemType "Directory" -Force | Out-Null
@@ -21,7 +16,7 @@ catch {
 }
 $downloadUrl = $response `
     | Select-Object -ExpandProperty "Links" `
-    | Where-Object {$PSItem.innerTExt -eq 'Download the .EXE'} `
+    | Where-Object {$PSItem.innerText -eq 'Download the .EXE'} `
     | Select-Object -ExpandProperty "href"
 $downloadUrl = 'https:' + $downloadUrl
 

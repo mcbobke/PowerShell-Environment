@@ -8,26 +8,29 @@ $Global:win10sdkPath = "$Global:psenvPath\win10sdk"
 $Global:opensshPath = "$Global:psenvPath\openssh"
 $Global:setupScriptsPath = "$Global:psenvPath\scripts\setuphelpers"
 
-# Check to see if the $Env:SystemDrive\psenv directory exists - create it if it doesn't
-if (!(Test-Path -Path "$psenvPath" -PathType "Container")) {
-    New-Item -Path "$Env:SystemDrive\" -Name "psenv" -ItemType "Directory" -Force | Out-Null
+# Check for existence of current profile
+if (Test-Path -Path "$Global:psenvPath" -PathType "Container") {
+    Write-Warning -Message "Previous environment found; uninstalling first before continuing with setup."
+    & "$psenvPath\Invoke-EnvironmentTeardown.ps1"
 }
 
+New-Item -Path "$Env:SystemDrive\" -Name "psenv" -ItemType "Directory" -Force | Out-Null
+
 # Copy files
-Write-Host "Copy the entire directory to $Global:psenvPath..."
+Write-Host "Copy the entire contents of the directory to $Global:psenvPath..."
 $EntireDirectoryParams = @{
     Path        = "$PSScriptRoot\*";
     Destination = "$Global:psenvPath";
     Force       = $True;
     Recurse     = $True;
-    Exclude     = @("*git*", "*images*");
+    Exclude     = @("*git*", "*images*", "*README*");
 }
 Copy-Item @EntireDirectoryParams | Out-Null
 
 Write-Host "Copying profile..."
 $ProfileParams = @{
     Path        = "$Global:psenvPath\scripts\profile.ps1";
-    Destination = $profile.AllUsersAllHosts;
+    Destination = $PROFILE.AllUsersAllHosts;
     Force       = $True;
 }
 Copy-Item @ProfileParams | Out-Null
@@ -52,6 +55,7 @@ if ($InstallWinDbg) {
 Write-Host 'Executing $profile.AllUsersAllHosts...'
 Write-Host "Close and reopen Powershell to enable colored prompt."
 Write-Warning -Message "Please run the Invoke-EnvironmentTeardown script in $Global:psenvPath to uninstall."
-& $profile.AllUsersAllHosts
+Write-Host "$($PROFILE.AllUsersAllHosts)"
+& $PROFILE.AllUsersAllHosts
 
 Write-Host "Done!"

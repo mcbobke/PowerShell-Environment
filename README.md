@@ -30,8 +30,8 @@ powershell.exe -ExecutionPolicy Bypass -File .\Invoke-EnvironmentTeardown.ps1
 
 ### Features
 
-* Installs module MattBobkeCmdlets and profile script for all users/all hosts on the client machine
+* Installs profile script and custom functions for all users/all hosts on the client machine
 * Custom Powershell shell window with a color-coded prompt and environment path extended to include OpenSSH/WinDbg
 * Optionally installs Windows OpenSSH [using Microsoft's method](https://github.com/PowerShell/Win32-OpenSSH/wiki/Install-Win32-OpenSSH)
 * Optionally installs WinDbg (https://developer.microsoft.com/en-US/windows/downloads/windows-10-sdk)
-* Uninstall scripts for full environment, OpenSSH, and WinDbg included
+* Uninstall script for full environment included - automatically run by Invoke-EnvironmentSetup if another version of the environment is installed

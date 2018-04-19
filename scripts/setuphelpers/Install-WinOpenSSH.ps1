@@ -1,11 +1,6 @@
 [CmdletBinding()]
 Param()
 
-# Check to see if the $Env:SystemDrive\psenv directory exists - create it if it doesn't
-if (!(Test-Path -Path "$Env:SystemDrive\psenv" -PathType "Container")) {
-    New-Item -Path "$Env:SystemDrive\" -Name "psenv" -ItemType "Directory" -Force | Out-Null
-}
-
 # Check to see if the $Global:psenvPath\openssh directory exists - create it if it doesn't
 if (!(Test-Path -Path "$Global:opensshPath" -PathType "Container")) {
     New-Item -Path "$Global:psenvPath" -Name "openssh" -ItemType "Directory" -Force | Out-Null
