@@ -1,22 +1,27 @@
 function Get-LoggedInUsers {
     <#
         .SYNOPSIS
-        Returns the session and user information of the currently logged-on users of the designated PC.
+        Returns the session and user information of the currently logged-on users of the designated PC, or the local PC.
 
         .DESCRIPTION
         Uses WMI to query the current logon sessions and users by matching their session IDs.
 
         .PARAMETER ComputerName
-        The name of the remote computer to query.
+        The name of a remote computer to query.
 
         .PARAMETER Credential
-        The credentials to use when querying a PC. Formatted as DOMAIN\USERNAME. Use an admin account.
+        The credentials to use when querying. Formatted as DOMAIN\USERNAME. Use a desktop admin account.
 
         .EXAMPLE
-        Get-LoggedInUsers -ComputerName computername -Credential domain\username
+        Get-LoggedInUsers -Credential domain\username -ComputerName computername
+        For a remote computer.
 
         .EXAMPLE
-        Get-LoggedInUsers computername domain\username
+        Get-LoggedInUsers
+        For the local computer.
+
+        .NOTES
+        If running on the local computer, ensure PowerShell is running with admin rights.
 
         .LINK
         https://stackoverflow.com/questions/23219718/powershell-script-to-see-currently-logged-in-users-domain-and-machine-status
@@ -26,11 +31,17 @@ function Get-LoggedInUsers {
     #>
 
     param(
-        [Parameter(Mandatory = $true, Position = 0)][String]$ComputerName,
-        [Parameter(Mandatory = $true, Position = 1)][System.Management.Automation.PSCredential]$Credential
+        [Parameter()][System.Management.Automation.PSCredential]$Credential,
+        [Parameter()][String]$ComputerName
     )
 
-    if (!(Test-Connection -ComputerName $ComputerName -Quiet)) {
+    $Script:local = $false
+
+    if (!$PSBoundParameters.ContainsKey('ComputerName')) {
+        $Script:local = $true
+    }
+
+    if (!$Script:local -and !(Test-Connection -ComputerName $ComputerName -Quiet)) {
         throw "That computer is offline or does not exist."
     }
 
@@ -50,8 +61,14 @@ function Get-LoggedInUsers {
         "11" = "CachedInteractive" # (Local w\cached credentials)
     }
 
-    $logon_sessions = @(Get-WmiObject -ClassName Win32_LogonSession -ComputerName $computername -Credential $Credential)
-    $logon_users = @(Get-WmiObject -ClassName Win32_LoggedOnUser -ComputerName $computername -Credential $Credential)
+    if (!$Script:local) {
+        $logon_users = @(Get-WmiObject -ClassName Win32_LoggedOnUser -ComputerName $computername -Credential $Credential)
+        $logon_sessions = @(Get-WmiObject -ClassName Win32_LogonSession -ComputerName $computername -Credential $Credential)
+    }
+    else {
+        $logon_users = @(Get-WmiObject -ClassName Win32_LoggedOnUser -Credential $Credential)
+        $logon_sessions = @(Get-WmiObject -ClassName Win32_LogonSession -Credential $Credential)
+    }
 
     $session_user = @{}
 

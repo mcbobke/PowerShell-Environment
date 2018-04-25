@@ -68,5 +68,3 @@ Write-Host "    Cleaning up..."
 $client.Dispose()
 Remove-Item -Path "$Global:opensshPath\$zippedFileName" -Force
 Remove-Item -Path "$Global:opensshPath\$unzippedFileName" -Recurse -Force
-
-Write-Host "    Done!"

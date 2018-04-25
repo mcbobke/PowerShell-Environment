@@ -14,18 +14,25 @@ function Get-WindowsVersion {
 
         .EXAMPLE
         Get-WindowsVersion -ComputerName computername -Credential domain\username
+        For a remote computer.
 
         .EXAMPLE
-        Get-WindowsVersion computername domain\username
+        Get-WindowsVersion
+        For the local computer.
+
+        .NOTES
+        If running on the local computer, ensure PowerShell is running with admin rights.
 
         .LINK
         https://superuser.com/a/1160428
     #>
 
     param(
-        [Parameter(Mandatory = $true, Position = 0)][string]$ComputerName,
-        [Parameter(Mandatory = $true, Position = 1)][System.Management.Automation.PSCredential]$Credential
+        [Parameter()][string]$ComputerName,
+        [Parameter()][System.Management.Automation.PSCredential]$Credential
     )
+
+    $Script:Path = "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion"
 
     function Get-Value {
         param(
@@ -34,31 +41,46 @@ function Get-WindowsVersion {
             [String]$Property
         )
 
-        $Path = "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion"
-
         $Params = @{
             ComputerName = $ComputerName;
             Credential   = $Credential;
             ScriptBlock  = {Get-ItemProperty -Path $args[0] -Name $args[1]};
-            ArgumentList = $Path, $Property;
+            ArgumentList = $Script:Path, $Property;
         }
 
         $(Invoke-Command @Params).$Property
     }
 
-    if (!(Test-Connection -ComputerName $ComputerName -Quiet)) {
+    $Script:local = $false
+
+    if (!$PSBoundParameters.ContainsKey('ComputerName')) {
+        $Script:local = $true
+    }
+
+    if (!$Script:local -and !(Test-Connection -ComputerName $ComputerName -Quiet)) {
         throw "That computer is offline or does not exist."
     }
 
     $WinVer = New-Object -TypeName PSObject
 
-    $WinVer | Add-Member -MemberType "NoteProperty" -Name "Major" -Value $(Get-Value -ComputerName $ComputerName -Credential $Credential -Property "CurrentMajorVersionNumber")
+    if (!$Script:local) {
+        $WinVer | Add-Member -MemberType "NoteProperty" -Name "Major" -Value $(Get-Value -ComputerName $ComputerName -Credential $Credential -Property "CurrentMajorVersionNumber")
 
-    $WinVer | Add-Member -MemberType "NoteProperty" -Name "Minor" -Value $(Get-Value -ComputerName $ComputerName -Credential $Credential -Property "CurrentMinorVersionNumber")
+        $WinVer | Add-Member -MemberType "NoteProperty" -Name "Minor" -Value $(Get-Value -ComputerName $ComputerName -Credential $Credential -Property "CurrentMinorVersionNumber")
 
-    $WinVer | Add-Member -MemberType "NoteProperty" -Name "Build" -Value $(Get-Value -ComputerName $ComputerName -Credential $Credential -Property "CurrentBuild")
+        $WinVer | Add-Member -MemberType "NoteProperty" -Name "Build" -Value $(Get-Value -ComputerName $ComputerName -Credential $Credential -Property "CurrentBuild")
 
-    $WinVer | Add-Member -MemberType "NoteProperty" -Name "Revision" -Value $(Get-Value -ComputerName $ComputerName -Credential $Credential -Property "UBR")
+        $WinVer | Add-Member -MemberType "NoteProperty" -Name "Revision" -Value $(Get-Value -ComputerName $ComputerName -Credential $Credential -Property "UBR")
+    }
+    else {
+        $Winver | Add-Member -MemberType "NoteProperty" -Name "Major" -Value $(Get-ItemProperty -Path $Script:Path -Name "CurrentMajorVersionNumber").CurrentMajorVersionNumber
+
+        $WinVer | Add-Member -MemberType "NoteProperty" -Name "Minor" -Value $(Get-ItemProperty -Path $Script:Path -Name "CurrentMinorVersionNumber").CurrentMinorVersionNumber
+
+        $WinVer | Add-Member -MemberType "NoteProperty" -Name "Build" -Value $(Get-ItemProperty -Path $Script:Path -Name "CurrentBuild").CurrentBuild
+
+        $WinVer | Add-Member -MemberType "NoteProperty" -Name "UBR" -Value $(Get-ItemProperty -Path $Script:Path -Name "UBR").UBR
+    }
 
     $WinVer
 }

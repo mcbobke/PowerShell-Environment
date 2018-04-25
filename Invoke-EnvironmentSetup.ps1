@@ -17,7 +17,7 @@ if (Test-Path -Path "$Global:psenvPath" -PathType "Container") {
 New-Item -Path "$Env:SystemDrive\" -Name "psenv" -ItemType "Directory" -Force | Out-Null
 
 # Copy files
-Write-Host "Copy the entire contents of the directory to $Global:psenvPath..."
+Write-Host "Copying the entire contents of the directory to $Global:psenvPath..." -ForegroundColor Cyan
 $EntireDirectoryParams = @{
     Path        = "$PSScriptRoot\*";
     Destination = "$Global:psenvPath";
@@ -27,7 +27,7 @@ $EntireDirectoryParams = @{
 }
 Copy-Item @EntireDirectoryParams | Out-Null
 
-Write-Host "Copying profile..."
+Write-Host "Copying profile..." -ForegroundColor Cyan
 $ProfileParams = @{
     Path        = "$Global:psenvPath\scripts\profile.ps1";
     Destination = $PROFILE.AllUsersAllHosts;
@@ -37,25 +37,22 @@ Copy-Item @ProfileParams | Out-Null
 
 # If switch, install OpenSSH
 if ($InstallSSH -and !(Test-Path -Path "C:\Windows\System32\OpenSSH")) {
-    Write-Host "Installing WinOpenSSH..."
+    Write-Host "Installing WinOpenSSH..." -ForegroundColor Cyan
     & "$Global:setupScriptsPath\Install-WinOpenSSH.ps1"
+    Write-Host "    WinOpenSSH installed!" -ForegroundColor Cyan
 }
 
 # If switch, install WinDbg
 # Not testing path as other versions of WinDbg may be installed
 if ($InstallWinDbg) {
-    Write-Host "Installing WinDbg..."
+    Write-Host "Installing WinDbg..." -ForegroundColor Cyan
     & "$Global:setupScriptsPath\Install-WinDbg.ps1"
     Write-Host "    Waiting 30 seconds for WinDbg to install..."
     Start-Sleep -Seconds 30 # Needed to let install WinDbg process complete
-    Write-Host "    Done!"
+    Write-Host "    WinDbg installed!" -ForegroundColor Cyan
 }
 
-# Execute profile - will show errors if certain profiles don't exist
-Write-Host 'Executing $profile.AllUsersAllHosts...'
-Write-Host "Close and reopen Powershell to enable colored prompt."
-Write-Warning -Message "Please run the Invoke-EnvironmentTeardown script in $Global:psenvPath to uninstall."
-Write-Host "$($PROFILE.AllUsersAllHosts)"
-& $PROFILE.AllUsersAllHosts
+Write-Host "Close and reopen Powershell to enable this profile." -ForegroundColor Cyan
+Write-Host "Please run the Invoke-EnvironmentTeardown script in $Global:psenvPath to uninstall this profile." -ForegroundColor Cyan
 
-Write-Host "Done!"
+Write-Host "Profile installation complete!" -ForegroundColor Green
