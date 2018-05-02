@@ -7,11 +7,26 @@ $Global:psenvPath = "$Env:SystemDrive\psenv"
 $Global:win10sdkPath = "$Global:psenvPath\win10sdk"
 $Global:opensshPath = "$Global:psenvPath\openssh"
 $Global:setupScriptsPath = "$Global:psenvPath\scripts\setuphelpers"
+$Script:modules = @('ImportExcel')
+
+# Tests to see if the script is being run with local admin privileges
+function Test-Administrator {
+    $identity = [System.Security.Principal.WindowsIdentity]::GetCurrent()
+    $principal = New-Object System.Security.Principal.WindowsPrincipal($identity)
+    $admin = [System.Security.Principal.WindowsBuiltInRole]::Administrator
+    $IsAdmin = $principal.IsInRole($admin)
+    return $IsAdmin
+}
+
+if (!(Test-Administrator)) {
+    Write-Warning -Message "You are not running as a local admin; please start PowerShell as a local admin!"
+    exit
+}
 
 # Check for existence of current profile
 if (Test-Path -Path "$Global:psenvPath" -PathType "Container") {
     Write-Warning -Message "Previous environment found; uninstalling first before continuing with setup."
-    & "$psenvPath\Invoke-EnvironmentTeardown.ps1"
+    & "$Global:psenvPath\Invoke-EnvironmentTeardown.ps1"
 }
 
 New-Item -Path "$Env:SystemDrive\" -Name "psenv" -ItemType "Directory" -Force | Out-Null
@@ -50,6 +65,12 @@ if ($InstallWinDbg) {
     Write-Host "    Waiting 30 seconds for WinDbg to install..."
     Start-Sleep -Seconds 30 # Needed to let install WinDbg process complete
     Write-Host "    WinDbg installed!" -ForegroundColor Cyan
+}
+
+Write-Host "Installing modules..." -ForegroundColor Cyan
+foreach ($module in $Script:modules) {
+    Write-Host "    $module" -ForegroundColor Yellow
+    Install-Module -Name $module -Scope 'AllUsers' -Force
 }
 
 Write-Host "Close and reopen Powershell to enable this profile." -ForegroundColor Cyan

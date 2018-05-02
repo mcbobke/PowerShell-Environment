@@ -16,7 +16,7 @@ catch {
 }
 $downloadUrl = $response `
     | Select-Object -ExpandProperty "Links" `
-    | Where-Object {$PSItem.innerText -eq 'Download the .EXE'} `
+    | Where-Object {$PSItem.innerText -eq 'DOWNLOAD THE INSTALLER'} `
     | Select-Object -ExpandProperty "href"
 $downloadUrl = 'https:' + $downloadUrl
 
