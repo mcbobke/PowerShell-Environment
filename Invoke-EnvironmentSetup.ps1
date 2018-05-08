@@ -7,7 +7,7 @@ $Global:psenvPath = "$Env:SystemDrive\psenv"
 $Global:win10sdkPath = "$Global:psenvPath\win10sdk"
 $Global:opensshPath = "$Global:psenvPath\openssh"
 $Global:setupScriptsPath = "$Global:psenvPath\scripts\setuphelpers"
-$Script:modules = @('ImportExcel')
+$Script:modules = @('ImportExcel','Plaster')
 
 # Tests to see if the script is being run with local admin privileges
 function Test-Administrator {
