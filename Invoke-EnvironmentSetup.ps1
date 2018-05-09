@@ -7,7 +7,7 @@ $Global:psenvPath = "$Env:SystemDrive\psenv"
 $Global:win10sdkPath = "$Global:psenvPath\win10sdk"
 $Global:opensshPath = "$Global:psenvPath\openssh"
 $Global:setupScriptsPath = "$Global:psenvPath\scripts\setuphelpers"
-$Script:modules = @('ImportExcel','Plaster')
+$Global:modulesToInstall = @('ImportExcel','Plaster')
 
 # Tests to see if the script is being run with local admin privileges
 function Test-Administrator {
@@ -20,6 +20,19 @@ function Test-Administrator {
 
 if (!(Test-Administrator)) {
     Write-Warning -Message "You are not running as a local admin; please start PowerShell as a local admin!"
+    exit
+}
+
+# Check for PSVersion 5.1
+try {
+    if (($PSVersionTable.PSVersion.Major -lt 5) -and ($PSVersionTable.PSVersion.Minor -lt 1)) {
+        Write-Warning -Message "Your version of PowerShell ($($PSVersionTable.PSVersion.ToString())) is not compatible with this profile."
+        Write-Warning -Message "Your Major/Minor version needs to be at least 5.1."
+        exit
+    }
+}
+catch {
+    Write-Warning -Message '$PSVersionTable not available, your PowerShell version is too old for this profile.'
     exit
 }
 
@@ -67,11 +80,8 @@ if ($InstallWinDbg) {
     Write-Host "    WinDbg installed!" -ForegroundColor Cyan
 }
 
-Write-Host "Installing modules..." -ForegroundColor Cyan
-foreach ($module in $Script:modules) {
-    Write-Host "    $module" -ForegroundColor Yellow
-    Install-Module -Name $module -Scope 'AllUsers' -Force
-}
+Write-Host "Evaluating PowerShellGet and modules..." -ForegroundColor Cyan
+& "$Global:setupScriptsPath\Install-Modules.ps1"
 
 Write-Host "Close and reopen Powershell to enable this profile." -ForegroundColor Cyan
 Write-Host "Please run the Invoke-EnvironmentTeardown script in $Global:psenvPath to uninstall this profile." -ForegroundColor Cyan
