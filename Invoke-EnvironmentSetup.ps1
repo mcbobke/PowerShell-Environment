@@ -19,7 +19,7 @@ function Test-Administrator {
 }
 
 if (!(Test-Administrator)) {
-    Write-Warning -Message "You are not running as a local admin; please start PowerShell as a local admin!"
+    Write-Warning -Message "You are not running as a local admin; please start this as a local admin!"
     exit
 }
 
@@ -82,8 +82,5 @@ if ($InstallWinDbg) {
 
 Write-Host "Evaluating PowerShellGet and modules..." -ForegroundColor Cyan
 & "$Global:setupScriptsPath\Install-Modules.ps1"
-
-Write-Host "Close and reopen Powershell to enable this profile." -ForegroundColor Cyan
-Write-Host "Please run the Invoke-EnvironmentTeardown script in $Global:psenvPath to uninstall this profile." -ForegroundColor Cyan
 
 Write-Host "Profile installation complete!" -ForegroundColor Green

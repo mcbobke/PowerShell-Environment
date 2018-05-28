@@ -16,17 +16,21 @@ cd ".\Powershell-Scripting\EnvironmentSetup"
 powershell.exe -ExecutionPolicy Bypass -File .\Invoke-EnvironmentSetup.ps1
 ```
 
-To install Windows OpenSSH and WinDbg at the same time:
+To install Windows OpenSSH and WinDbg alongside the profile (you can also leave either of them out):
 
 ```
 powershell.exe -ExecutionPolicy Bypass -File .\Invoke-EnvironmentSetup.ps1 -InstallSSH -InstallWinDbg
 ```
+
+There are also batch script installers for each possible combination. Make sure to right-click and run as admin.
 
 ### Uninstallation
 
 ```
 powershell.exe -ExecutionPolicy Bypass -File .\Invoke-EnvironmentTeardown.ps1
 ```
+
+Or run the uninstall batch script.
 
 ### Features
 
