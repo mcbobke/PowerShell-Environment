@@ -61,13 +61,25 @@ function Get-LoggedInUsers {
         "11" = "CachedInteractive" # (Local w\cached credentials)
     }
 
-    if (!$Script:local) {
-        $logon_users = @(Get-WmiObject -ClassName Win32_LoggedOnUser -ComputerName $computername -Credential $Credential)
-        $logon_sessions = @(Get-WmiObject -ClassName Win32_LogonSession -ComputerName $computername -Credential $Credential)
+    if ($PSBoundParameters.ContainsKey('Credential')){
+        if (!$Script:local) {
+            $logon_users = @(Get-WmiObject -ClassName Win32_LoggedOnUser -ComputerName $computername -Credential $Credential)
+            $logon_sessions = @(Get-WmiObject -ClassName Win32_LogonSession -ComputerName $computername -Credential $Credential)
+        }
+        else {
+            $logon_users = @(Get-WmiObject -ClassName Win32_LoggedOnUser -Credential $Credential)
+            $logon_sessions = @(Get-WmiObject -ClassName Win32_LogonSession -Credential $Credential)
+        }
     }
     else {
-        $logon_users = @(Get-WmiObject -ClassName Win32_LoggedOnUser -Credential $Credential)
-        $logon_sessions = @(Get-WmiObject -ClassName Win32_LogonSession -Credential $Credential)
+        if (!$Script:local) {
+            $logon_users = @(Get-WmiObject -ClassName Win32_LoggedOnUser -ComputerName $computername)
+            $logon_sessions = @(Get-WmiObject -ClassName Win32_LogonSession -ComputerName $computername)
+        }
+        else {
+            $logon_users = @(Get-WmiObject -ClassName Win32_LoggedOnUser)
+            $logon_sessions = @(Get-WmiObject -ClassName Win32_LogonSession)
+        }
     }
 
     $session_user = @{}
