@@ -61,7 +61,7 @@ function Get-LoggedInUsers {
         "11" = "CachedInteractive" # (Local w\cached credentials)
     }
 
-    if ($PSBoundParameters.ContainsKey('Credential')){
+    if ($PSBoundParameters.ContainsKey('Credential')) {
         if (!$Script:local) {
             $logon_users = @(Get-WmiObject -ClassName Win32_LoggedOnUser -ComputerName $computername -Credential $Credential)
             $logon_sessions = @(Get-WmiObject -ClassName Win32_LogonSession -ComputerName $computername -Credential $Credential)

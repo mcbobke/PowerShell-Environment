@@ -41,11 +41,20 @@ function Get-WindowsVersion {
             [String]$Property
         )
 
-        $Params = @{
-            ComputerName = $ComputerName;
-            Credential   = $Credential;
-            ScriptBlock  = {Get-ItemProperty -Path $args[0] -Name $args[1]};
-            ArgumentList = $Script:Path, $Property;
+        if ($PSBoundParameters.ContainsKey('Credential')) {
+            $Params = @{
+                ComputerName = $ComputerName;
+                Credential   = $Credential;
+                ScriptBlock  = {Get-ItemProperty -Path $args[0] -Name $args[1]};
+                ArgumentList = $Script:Path, $Property;
+            }
+        }
+        else {
+            $Params = @{
+                ComputerName = $ComputerName;
+                ScriptBlock  = {Get-ItemProperty -Path $args[0] -Name $args[1]};
+                ArgumentList = $Script:Path, $Property;
+            }
         }
 
         $(Invoke-Command @Params).$Property
@@ -64,13 +73,24 @@ function Get-WindowsVersion {
     $WinVer = New-Object -TypeName PSObject
 
     if (!$Script:local) {
-        $WinVer | Add-Member -MemberType "NoteProperty" -Name "Major" -Value $(Get-Value -ComputerName $ComputerName -Credential $Credential -Property "CurrentMajorVersionNumber")
+        if ($PSBoundParameters.ContainsKey('Credential')) {
+            $WinVer | Add-Member -MemberType "NoteProperty" -Name "Major" -Value $(Get-Value -ComputerName $ComputerName -Credential $Credential -Property "CurrentMajorVersionNumber")
 
-        $WinVer | Add-Member -MemberType "NoteProperty" -Name "Minor" -Value $(Get-Value -ComputerName $ComputerName -Credential $Credential -Property "CurrentMinorVersionNumber")
+            $WinVer | Add-Member -MemberType "NoteProperty" -Name "Minor" -Value $(Get-Value -ComputerName $ComputerName -Credential $Credential -Property "CurrentMinorVersionNumber")
 
-        $WinVer | Add-Member -MemberType "NoteProperty" -Name "Build" -Value $(Get-Value -ComputerName $ComputerName -Credential $Credential -Property "CurrentBuild")
+            $WinVer | Add-Member -MemberType "NoteProperty" -Name "Build" -Value $(Get-Value -ComputerName $ComputerName -Credential $Credential -Property "CurrentBuild")
 
-        $WinVer | Add-Member -MemberType "NoteProperty" -Name "Revision" -Value $(Get-Value -ComputerName $ComputerName -Credential $Credential -Property "UBR")
+            $WinVer | Add-Member -MemberType "NoteProperty" -Name "Revision" -Value $(Get-Value -ComputerName $ComputerName -Credential $Credential -Property "UBR")
+        }
+        else {
+            $WinVer | Add-Member -MemberType "NoteProperty" -Name "Major" -Value $(Get-Value -ComputerName $ComputerName -Property "CurrentMajorVersionNumber")
+
+            $WinVer | Add-Member -MemberType "NoteProperty" -Name "Minor" -Value $(Get-Value -ComputerName $ComputerName -Property "CurrentMinorVersionNumber")
+
+            $WinVer | Add-Member -MemberType "NoteProperty" -Name "Build" -Value $(Get-Value -ComputerName $ComputerName -Property "CurrentBuild")
+
+            $WinVer | Add-Member -MemberType "NoteProperty" -Name "Revision" -Value $(Get-Value -ComputerName $ComputerName -Property "UBR")
+        }
     }
     else {
         $Winver | Add-Member -MemberType "NoteProperty" -Name "Major" -Value $(Get-ItemProperty -Path $Script:Path -Name "CurrentMajorVersionNumber").CurrentMajorVersionNumber
