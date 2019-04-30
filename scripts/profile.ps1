@@ -31,10 +31,10 @@ foreach ($script in (Get-ChildItem "$psenvPath\scripts\import")) {
 }
 
 if (Test-Administrator) {
-    $Shell.WindowTitle = "Powershell (ADMINISTRATOR)"
+    $Shell.WindowTitle = "Windows PowerShell (ADMINISTRATOR)"
 }
 else {
-    $Shell.WindowTitle = "Powershell"
+    $Shell.WindowTitle = "Windows PowerShell"
 }
 
 <# $BufferSize = $Shell.BufferSize

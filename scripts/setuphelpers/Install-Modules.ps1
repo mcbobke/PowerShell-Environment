@@ -8,7 +8,7 @@ Param()
 # https://docs.microsoft.com/en-us/powershell/gallery/installing-psget.
 
 Write-Host "    Installing latest Nuget PackageProvider..."
-Install-PackageProvider Nuget -Force | Out-Null
+Install-PackageProvider 'Nuget' -Force | Out-Null
 
 Write-Host "    Setting PSRepository 'PSGallery' to Trusted..."
 Set-PSRepository -Name 'PSGallery' -InstallationPolicy 'Trusted' | Out-Null
