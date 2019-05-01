@@ -50,3 +50,9 @@ $Shell.WindowSize = $WindowSize #>
 # Additonal PATH extension
 $env:Path += ";C:\Program Files\OpenSSH"
 $env:Path += ";C:\Program Files (x86)\Windows Kits\10\Debuggers\x64"
+
+# Choco tab completion - https://chocolatey.org/docs/troubleshooting#why-does-choco-intab-not-work-for-me
+$ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+if (Test-Path($ChocolateyProfile)) {
+    Import-Module "$ChocolateyProfile"
+}
