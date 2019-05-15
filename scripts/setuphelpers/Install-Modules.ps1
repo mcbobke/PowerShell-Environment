@@ -4,21 +4,19 @@ Param()
 # Given that this profile is written with explicit requirement for PowerShell version 5.1,
 # PackageManagement/PowerShellGet is already installed and the PSGallery repository is registered
 # by default. Microsoft advises that the latest Nuget PackageProvider be installed before
-# updating PowerShellGet (which also updates PackageManagement)
+# updating PowerShellGet
 # https://docs.microsoft.com/en-us/powershell/gallery/installing-psget.
 
-Write-Host "    Installing latest Nuget PackageProvider..."
-Install-PackageProvider 'Nuget' -Force | Out-Null
+Write-Host "    Bootstrapping NuGet provider, PackageManagement, and PowerShellGet..."
 
-Write-Host "    Setting PSRepository 'PSGallery' to Trusted..."
-Set-PSRepository -Name 'PSGallery' -InstallationPolicy 'Trusted' | Out-Null
+$scriptBlock = {
+    Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
+    Install-PackageProvider 'NuGet' -Force -MinimumVersion '2.8.5.208' -Scope AllUsers -WarningAction SilentlyContinue | Out-Null
+    Install-Module -Name 'PackageManagement' -Force -Scope AllUsers -WarningAction SilentlyContinue | Out-Null
+    Install-Module -Name 'PowerShellGet' -Force -Scope AllUsers -WarningAction SilentlyContinue | Out-Null
+}
 
-Write-Host "    Updating PowerShellGet module..."
-Update-Module -Name 'PowerShellGet' | Out-Null
-
-# Attempts to reload PowerShellGet after updating
-Get-Module -Name 'PowerShellGet' | Remove-Module -Force | Out-Null
-Import-Module -Name 'PowerShellGet' -Force | Out-Null
+Start-Job -ScriptBlock $scriptBlock | Wait-Job | Receive-Job | Out-Null
 
 Write-Host "    Installing/Updating modules..."
 $installedModules = Get-InstalledModule | Select-Object -ExpandProperty 'Name'
