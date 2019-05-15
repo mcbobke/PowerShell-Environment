@@ -10,8 +10,8 @@ Param()
 Write-Host "    Bootstrapping NuGet provider, PackageManagement, and PowerShellGet..."
 
 $scriptBlock = {
-    Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
     Install-PackageProvider 'NuGet' -Force -MinimumVersion '2.8.5.208' -Scope AllUsers -WarningAction SilentlyContinue | Out-Null
+    Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
     Install-Module -Name 'PackageManagement' -Force -Scope AllUsers -WarningAction SilentlyContinue | Out-Null
     Install-Module -Name 'PowerShellGet' -Force -Scope AllUsers -WarningAction SilentlyContinue | Out-Null
 }
