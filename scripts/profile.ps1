@@ -56,3 +56,6 @@ $ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
 if (Test-Path($ChocolateyProfile)) {
     Import-Module "$ChocolateyProfile"
 }
+
+# PSReadLine Options/Bindings
+Set-PSReadLineKeyHandler -Chord 'Ctrl+p' -Function CaptureScreen
