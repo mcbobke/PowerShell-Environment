@@ -63,6 +63,15 @@ $ProfileParams = @{
 }
 Copy-Item @ProfileParams | Out-Null
 
+# Install Chocolatey
+if (!(Test-Path -Path "$Env:SystemDrive\ProgramData\chocolatey\choco.exe")) {
+    Write-Host "Installing Chocolatey..." -ForegroundColor Cyan
+    Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+}
+else {
+    Write-Host "Chocolatey install skipped; installation found at $Env:SystemDrive\ProgramData\chocolatey\choco.exe" -ForegroundColor Cyan
+}
+
 # If switch, install OpenSSH
 if ($InstallSSH -and !(Test-Path -Path "C:\Windows\System32\OpenSSH")) {
     Write-Host "Installing WinOpenSSH..." -ForegroundColor Cyan
