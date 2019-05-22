@@ -7,7 +7,7 @@ $Global:psenvPath = "$Env:SystemDrive\psenv"
 $Global:win10sdkPath = "$Global:psenvPath\win10sdk"
 $Global:opensshPath = "$Global:psenvPath\openssh"
 $Global:setupScriptsPath = "$Global:psenvPath\scripts\setuphelpers"
-$Global:modulesToInstall = @('ImportExcel', 'Plaster', 'InvokeBuild', 'Pester', 'BuildHelpers', 'PSDeploy')
+$Global:modulesToInstall = @('ImportExcel', 'Plaster', 'InvokeBuild', 'Pester', 'BuildHelpers', 'PSDeploy', 'posh-git')
 
 # Tests to see if the script is being run with local admin privileges
 function Test-Administrator {

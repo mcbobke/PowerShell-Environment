@@ -59,3 +59,6 @@ if (Test-Path($ChocolateyProfile)) {
 
 # PSReadLine Options/Bindings
 Set-PSReadLineKeyHandler -Chord 'Ctrl+p' -Function CaptureScreen
+
+# Modules to import
+Import-Module -Name posh-git
