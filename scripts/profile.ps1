@@ -20,7 +20,19 @@ function prompt {
     return ">" # The prompt function must return a string, or it will write the default prompt #>
     $ESC = [char]27
 
-    $(if (Test-Administrator) {"$ESC[38;5;9mADMIN $ESC[0m>"} else {"PS>"})
+    if (Test-Administrator) {
+        $promptAdminWarning = "(ADMINISTRATOR) "
+    }
+    else {
+        $promptAdminWarning = ""
+    }
+
+    $locationString = "$(Get-Location)".Replace($Env:USERPROFILE, "~")
+    
+    $promptString = "$ESC[38;5;9m{0}$ESC[0m$ESC[38;5;10m{1}$ESC[0m$ESC[38;5;250m@$ESC[0m$ESC[38;5;200m{2}$ESC[0m $ESC[38;5;250m:$ESC[0m $ESC[38;5;11m{3}$ESC[0m`n`> " `
+        -f $promptAdminWarning,$Env:USERNAME,$Env:COMPUTERNAME,$locationString
+
+    $promptString
 }
 
 $psenvPath = "$Env:SystemDrive\psenv"
