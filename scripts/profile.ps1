@@ -7,7 +7,7 @@ function Test-Administrator {
 }
 
 function prompt {
-    # If running as administrator, set the following options
+<#     # If running as administrator, set the following options
     if (Test-Administrator) {
         Write-Host "(ADMINISTRATOR) " -NoNewline -ForegroundColor Red
     }
@@ -17,7 +17,22 @@ function prompt {
     Write-Host "$Env:COMPUTERNAME" -NoNewline -ForegroundColor Magenta
     Write-Host " : " -NoNewline -ForegroundColor DarkGray
     Write-Host "$(Get-Location)".Replace($Env:USERPROFILE, "~") -ForegroundColor Yellow
-    return ">" # The prompt function must return a string, or it will write the default prompt
+    return ">" # The prompt function must return a string, or it will write the default prompt #>
+    $ESC = [char]27
+
+    if (Test-Administrator) {
+        $promptAdminWarning = "(ADMINISTRATOR) "
+    }
+    else {
+        $promptAdminWarning = ""
+    }
+
+    $locationString = "$(Get-Location)".Replace($Env:USERPROFILE, "~")
+    
+    $promptString = "$ESC[38;5;9m{0}$ESC[0m$ESC[38;5;10m{1}$ESC[0m$ESC[38;5;250m@$ESC[0m$ESC[38;5;200m{2}$ESC[0m $ESC[38;5;250m:$ESC[0m $ESC[38;5;11m{3}$ESC[0m`n`> " `
+        -f $promptAdminWarning,$Env:USERNAME,$Env:COMPUTERNAME,$locationString
+
+    $promptString
 }
 
 $psenvPath = "$Env:SystemDrive\psenv"
