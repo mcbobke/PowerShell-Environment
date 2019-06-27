@@ -1,0 +1,6 @@
+7zip
+vlc
+winrar
+git
+putty
+winscp
