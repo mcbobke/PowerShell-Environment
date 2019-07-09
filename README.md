@@ -4,7 +4,7 @@
 
 ## Quick Installation
 
-```
+```powershell
 git clone https://github.com/mcbobke/PowerShell-Environment.git
 Set-Location -Path '.\PowerShell-Environment'
 & .\Install-Profile.ps1
