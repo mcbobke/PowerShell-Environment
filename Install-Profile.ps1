@@ -6,6 +6,8 @@ $ProfileParams = @{
 }
 Copy-Item @ProfileParams | Out-Null
 
+New-Item -Path "$Env:SystemDrive\psenv" -Name 'import' -ItemType 'Directory' -ErrorAction 'SilentlyContinue'
+
 Write-Verbose -Message "Copying helper scripts to [$Env:SystemDrive\psenv]" -Verbose
 $ScriptsParams = @{
     Path = ".\import\*"
