@@ -84,7 +84,7 @@ Set-PSReadLineKeyHandler -Chord 'Ctrl+p' -Function 'CaptureScreen'
 $moduleList = @('posh-git')
 foreach ($module in $moduleList) {
     try {
-        Import-Module -Name $module
+        Import-Module -Name $module -ErrorAction 'Stop'
     }
     catch {
         Write-Verbose -Message "Could not import module [$module]" -Verbose
