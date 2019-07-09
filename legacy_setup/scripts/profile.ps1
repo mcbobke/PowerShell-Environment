@@ -42,7 +42,7 @@ $psenvPath = "$Env:SystemDrive\psenv"
 $Shell = $Host.UI.RawUI
 
 # Source all of the scripts
-foreach ($script in (Get-ChildItem "$psenvPath\scripts\import")) {
+foreach ($script in (Get-ChildItem "$psenvPath\scripts\import" | Select-Object -ExpandProperty BaseName)) {
     . (Join-Path -Path "$psenvPath\scripts\import" -ChildPath $script)
 }
 
@@ -77,4 +77,4 @@ if (Test-Path($ChocolateyProfile)) {
 Set-PSReadLineKeyHandler -Chord 'Ctrl+p' -Function CaptureScreen
 
 # Modules to import
-Import-Module -Name posh-git
+Import-Module -Name 'posh-git'
