@@ -8,20 +8,66 @@ if ($IsWindows -or ($PSVersionTable.PSVersion -match '^5.1')) {
     }
 }
 
+# Modules to import
+$moduleList = @('posh-git')
+foreach ($module in $moduleList) {
+    try {
+        Import-Module -Name $module
+    }
+    catch {
+        Write-Verbose -Message "Could not import module [$module]" -Verbose
+    }
+}
+
+# Choco tab completion - https://chocolatey.org/docs/troubleshooting#why-does-choco-intab-not-work-for-me
+$ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+if (Test-Path($ChocolateyProfile)) {
+    Import-Module "$ChocolateyProfile"
+}
+
 function prompt {
+    $origLastExitCode = $LASTEXITCODE
+    $prompt = ""
+
     if ($IsWindows -or ($PSVersionTable.PSVersion -match '^5.1')) {
         # If running as administrator, set the following options
         if (Test-Administrator) {
-            Write-Host "(ADMINISTRATOR) " -NoNewline -ForegroundColor Red
+            $prompt += Write-Prompt "(ADMINISTRATOR) " -ForegroundColor Red
         }
     }
 
-    Write-Host "$Env:USERNAME" -NoNewline -ForegroundColor Green
-    Write-Host "@" -NoNewline -ForegroundColor DarkGray
-    Write-Host "$Env:COMPUTERNAME" -NoNewline -ForegroundColor Magenta
-    Write-Host " : " -NoNewline -ForegroundColor DarkGray
-    Write-Host "$(Get-Location)".Replace($Env:USERPROFILE, "~") -ForegroundColor Yellow
-    return ">" # The prompt function must return a string, or it will write the default prompt
+    $prompt += Write-Prompt "$Env:USERNAME" -ForegroundColor Green
+    $prompt += Write-Prompt "@" -ForegroundColor DarkGray
+    $prompt += Write-Prompt "$Env:COMPUTERNAME" -ForegroundColor Magenta
+    $prompt += Write-Prompt " : " -ForegroundColor DarkGray
+    $prompt += Write-Prompt "$(Get-Location)".Replace($Env:USERPROFILE, "~") -ForegroundColor Yellow
+
+    if ($status = Get-GitStatus -Force) {
+        $prompt += " ["
+        if ($status.HasWorking) {
+            $prompt += (Write-GitWorkingDirStatusSummary $status -NoLeadingSpace) +
+                       "$(Write-GitWorkingDirStatus $status) "
+        }
+        if ($status.HasWorking -and $status.HasIndex) {
+            $prompt += "| "
+        }
+        if ($status.HasIndex) {
+            $prompt += "$(Write-GitIndexStatus $status -NoLeadingSpace) "
+        }
+        $prompt += "$(Write-GitBranchStatus $status -NoLeadingSpace)$(Write-GitBranchName $status)]"
+    }
+
+    if ($PsDebugContext) {
+        $prompt += "`n[DBG]: "
+    }
+    else {
+        $prompt += "`n"
+    }
+    
+    $prompt += $('>' * ($nestedPromptLevel + 1)) + ' '
+
+    $LASTEXITCODE = $origLastExitCode
+    return $prompt # The prompt function must return a string, or it will write the default prompt
     
     <# $ESC = "$([char]27)"
 
@@ -42,13 +88,16 @@ function prompt {
 
 $psenvPath = "$Env:SystemDrive\psenv"
 
-# Variable to make editing options simpler
-$Shell = $Host.UI.RawUI
-
 # Source all of the scripts
 foreach ($script in (Get-ChildItem "$psenvPath\import" | Select-Object -ExpandProperty BaseName)) {
     . (Join-Path -Path "$psenvPath\import" -ChildPath $script)
 }
+
+# PSReadLine Options/Bindings
+Set-PSReadLineKeyHandler -Chord 'Ctrl+p' -Function 'CaptureScreen'
+
+# Variable to make editing options simpler
+# $Shell = $Host.UI.RawUI
 
 <# if (Test-Administrator) {
     $Shell.WindowTitle = "Windows PowerShell (ADMINISTRATOR)"
@@ -70,23 +119,3 @@ $Shell.WindowSize = $WindowSize #>
 # Additonal PATH extension
 <# $env:Path += ";C:\Program Files\OpenSSH"
 $env:Path += ";C:\Program Files (x86)\Windows Kits\10\Debuggers\x64" #>
-
-# Choco tab completion - https://chocolatey.org/docs/troubleshooting#why-does-choco-intab-not-work-for-me
-$ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
-if (Test-Path($ChocolateyProfile)) {
-    Import-Module "$ChocolateyProfile"
-}
-
-# PSReadLine Options/Bindings
-Set-PSReadLineKeyHandler -Chord 'Ctrl+p' -Function 'CaptureScreen'
-
-# Modules to import
-$moduleList = @('posh-git')
-foreach ($module in $moduleList) {
-    try {
-        Import-Module -Name $module
-    }
-    catch {
-        Write-Verbose -Message "Could not import module [$module]" -Verbose
-    }
-}
