@@ -118,4 +118,28 @@ $Shell.WindowSize = $WindowSize #>
 
 # Additonal PATH extension
 <# $env:Path += ";C:\Program Files\OpenSSH"
+<<<<<<< HEAD
 $env:Path += ";C:\Program Files (x86)\Windows Kits\10\Debuggers\x64" #>
+=======
+$env:Path += ";C:\Program Files (x86)\Windows Kits\10\Debuggers\x64" #>
+
+# Choco tab completion - https://chocolatey.org/docs/troubleshooting#why-does-choco-intab-not-work-for-me
+$ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+if (Test-Path($ChocolateyProfile)) {
+    Import-Module "$ChocolateyProfile"
+}
+
+# PSReadLine Options/Bindings
+Set-PSReadLineKeyHandler -Chord 'Ctrl+p' -Function 'CaptureScreen'
+
+# Modules to import
+$moduleList = @('posh-git')
+foreach ($module in $moduleList) {
+    try {
+        Import-Module -Name $module -ErrorAction 'Stop'
+    }
+    catch {
+        Write-Verbose -Message "Could not import module [$module]" -Verbose
+    }
+}
+>>>>>>> 18748a4fbe5d7f1e4746eb710095a80950735746
