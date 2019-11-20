@@ -87,6 +87,7 @@ function prompt {
 }
 
 $psenvPath = "$Env:SystemDrive\psenv"
+$Env:HOME = $Env:USERPROFILE
 
 # Source all of the scripts
 foreach ($script in (Get-ChildItem "$psenvPath\import" | Select-Object -ExpandProperty BaseName)) {
