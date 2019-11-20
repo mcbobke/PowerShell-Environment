@@ -1,12 +1,12 @@
-Write-Verbose -Message "Copying profile to [$($Profile.AllUsersAllHosts)]" -Verbose
+Write-Verbose -Message "Copying profile to [$($Profile.AllUsersCurrentHost)]" -Verbose
 $ProfileParams = @{
     Path        = '.\profile.ps1';
-    Destination = $Profile.AllUsersAllHosts;
+    Destination = $Profile.AllUsersCurrentHost;
     Force       = $true;
 }
-Copy-Item @ProfileParams | Out-Null
+$null = Copy-Item @ProfileParams
 
-New-Item -Path "$Env:SystemDrive\psenv" -Name 'import' -ItemType 'Directory' -ErrorAction 'SilentlyContinue'
+$null = New-Item -Path "$Env:SystemDrive\psenv" -Name 'import' -ItemType 'Directory' -ErrorAction 'SilentlyContinue'
 
 Write-Verbose -Message "Copying helper scripts to [$Env:SystemDrive\psenv]" -Verbose
 $ScriptsParams = @{
@@ -15,4 +15,4 @@ $ScriptsParams = @{
     Recurse = $true
     Force = $true
 }
-Copy-Item @ScriptsParams | Out-Null
+$null = Copy-Item @ScriptsParams
