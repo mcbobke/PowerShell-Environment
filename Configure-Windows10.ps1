@@ -1,7 +1,8 @@
 [CmdletBinding()]
 Param()
 
-Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope LocalMachine -Force
+# THIS MUST BE RUN FIRST
+# Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope LocalMachine -Force
 
 if ($PSVersionTable.PSVersion.ToString() -match '^5.1') {
     $scriptBlock = {
