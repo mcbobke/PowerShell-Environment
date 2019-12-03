@@ -31,4 +31,4 @@ if (-not (Get-Command -Name 'choco.exe')) {
     Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 }
 
-choco install -y vscode python2 python3 sharex firacode 7zip vlc pwsh putty winscp firefox notion paint.net veracrypt
+choco install -y vscode python2 python3 sharex firacode 7zip vlc pwsh putty winscp firefox notion paint.net veracrypt git everything
