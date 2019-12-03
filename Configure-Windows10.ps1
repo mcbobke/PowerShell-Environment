@@ -23,10 +23,12 @@ else {
     Write-Error -Message 'This function requires Windows PowerShell or PowerShell Core on Windows.'
     throw
 }
-
 Write-Verbose -Message 'Bootstrapping package management' -Verbose
 Start-Job -ScriptBlock $scriptBlock | Wait-Job | Receive-Job | Out-Null
 Write-Verbose -Message 'Package management boostrapped' -Verbose
+
+# Special case for posh-git install - needs AllowPrerelease for the prompt functions to work
+Install-Module -Name 'posh-git' -AllowPrerelease -Force
 
 if (-not (Get-Command -Name 'choco.exe')) {
     Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
